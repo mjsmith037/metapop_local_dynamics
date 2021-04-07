@@ -5,7 +5,7 @@ library(JuliaCall)
 library(ggraph)
 
 julia_setup()
-julia_source("../../Code/multipop_MANTIS.jl")
+julia_source("../../code/multipop_MANTIS.jl")
 
 ## plotting parameters
 my_cols <- c("#f74700", "#016394", "#b6003b", "#005342")
@@ -49,7 +49,7 @@ timeseries <- bind_rows(
                                       "currently infectious (y)")),
            network = "A      B"),
   julia_call("runMANTIS", strainstructure=struct, tstep=tsteps, tmax=maxtime,
-             beta=R0 * (sigma + mu + c(movement_rate, 0)), gamma=gamma, sigma=sigma, mu=mu,
+             beta=beta, gamma=gamma, sigma=sigma, mu=mu,
              chi=matrix(c(-movement_rate, 0, movement_rate, 0), 2, 2),
              initvals=initial_conditions)$timeseries %>%
     set_colnames(c(expand.grid(str_c("Patch_", 1:n_patches),
@@ -64,7 +64,7 @@ timeseries <- bind_rows(
                                       "currently infectious (y)")),
            network = "A -> B"),
   julia_call("runMANTIS", strainstructure=struct, tstep=tsteps, tmax=maxtime,
-             beta=R0 * (sigma + mu + c(0, movement_rate)), gamma=gamma, sigma=sigma, mu=mu,
+             beta=beta, gamma=gamma, sigma=sigma, mu=mu,
              chi=matrix(c(0, movement_rate, 0, -movement_rate), 2, 2),
              initvals=initial_conditions)$timeseries %>%
     set_colnames(c(expand.grid(str_c("Patch_", 1:n_patches),
@@ -99,14 +99,3 @@ ggplot(timeseries %>% filter(strain == "Strain_111", equation=="y")) +
         legend.background=element_blank(),
         legend.title=element_blank())
 ggsave("two-pop-comparison.pdf", width=8, height=2.5)
-
-## how many extrema (what are the dynamics for each patch in each network structure)
-timeseries %>%
-  filter(equation == "y") %>%
-  group_by(equation, patch, network, strain) %>%
-  ## note that results are subject to rounding;
-  ## this level corresponds to mimimum accuracy set in Julia integration
-  summarise(n_extrema = prevalence %>% round(8) %>% unique() %>%
-              {ifelse(tail(., 1) == 0, -1, (. > lead(., default=-1) & . > lag(., default=-1)) %>% sum())}) %>%
-  pivot_wider(names_from=network, values_from=n_extrema) %>%
-  arrange(strain, patch)

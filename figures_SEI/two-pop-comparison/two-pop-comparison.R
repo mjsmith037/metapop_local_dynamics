@@ -4,7 +4,7 @@ library(JuliaCall)
 library(scales)
 
 julia_setup()
-julia_source("../../Code/multipop_SI.jl")
+julia_source("../../code/multipop_SEI.jl")
 
 my_cols <- c("#f74700", "#016394", "#b6003b", "#005342")
 

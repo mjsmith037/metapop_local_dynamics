@@ -3,7 +3,7 @@ library(tidyverse)
 library(JuliaCall)
 
 julia_setup()
-julia_source("../../Code/multipop_MANTIS.jl")
+julia_source("../../code/multipop_MANTIS.jl")
 
 my_cols <- c("#f74700", "#016394", "#b6003b", "#005342")
 
@@ -54,7 +54,7 @@ timeseries <- julia_call("runMANTIS", strainstructure=struct, tstep=tsteps, tmax
 ggplot(timeseries %>% filter(strain == "Strain_122", equation=="y")) +
   aes(colour=patch, y=prevalence, x=time) +
   geom_line(size=0.75) +
-  facet_grid_sc(~patch) +
+  facet_wrap(~patch) +
   scale_x_continuous(expand=c(0,0), breaks=c(860, 900, 940, 980)) +
   scale_colour_manual(values=my_cols) +
   ylab("Proportion infectious (y)") +

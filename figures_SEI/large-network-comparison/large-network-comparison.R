@@ -20,8 +20,8 @@ filler_plot <- ggplot() + theme(panel.background=element_blank())
 
 ## load the networks
 make_network_plots <- function() {
-  source("../../Code/random_tree_networks.R")
-  source("../../Code/directed_watts_strogatz_networks.R")
+  source("../../code/random_tree_networks.R")
+  source("../../code/directed_watts_strogatz_networks.R")
   set.seed(0)
   n_patches <- 25
   example_er <- play_erdos_renyi(n_patches, m=90) %>% mutate(net_type = "er") %>%
@@ -178,8 +178,7 @@ make_propdyn_plot <- function(file_name) {
   return(dynamics)
 }
 
-# single strain main parameterization
-metrics_plots <- make_metrics_plots("../../Results/LNS_sigma=13/large-network-simulations.csv")
+metrics_plots <- make_metrics_plots("large-network-simulations_s13.csv")
 ggsave(gridExtra::arrangeGrob(metrics_plots[[1]] + facet_zoom(xlim = c(0.25, 0.65), zoom.size=1),
                               metrics_plots[[2]],
                               metrics_plots[[3]] + facet_zoom(xlim = c(0.38, 0.54), zoom.size=1),
@@ -187,16 +186,15 @@ ggsave(gridExtra::arrangeGrob(metrics_plots[[1]] + facet_zoom(xlim = c(0.25, 0.6
                               filler_plot,
                               layout_matrix=matrix(c(2,3,4,5,2,6,4,5), 2, 4, byrow=TRUE),
                               widths=c(1.6,1,1,1), heights=c(4,4)),
-       file="main_metrics.pdf", width=9, height=5, device=cairo_pdf)
+       file="main_metrics.pdf", width=9, height=5)
 
 ggsave((make_network_plots() + scale_colour_manual(values=rep("black", 5), aesthetics=c("colour", "edge_colour"))) /
-         make_propdyn_plot("../../Results/LNS_sigma=13/large-network-simulations.csv") +
+         make_propdyn_plot("large-network-simulations_s13.csv") +
          theme(strip.text=element_blank(), strip.background=element_blank()) +
          plot_layout(heights=c(2, 2.25)),
-       filename="main_propdyn.pdf", width=8, height=4.25, device=cairo_pdf)
+       filename="main_propdyn.pdf", width=8, height=4.25)
 
-# single strain alternate parameterization
-metrics_plots <- make_metrics_plots("../../Results/LNS_sigma=40/large-network-simulations.csv")
+metrics_plots <- make_metrics_plots("large-network-simulations_s40.csv")
 ggsave(gridExtra::arrangeGrob(metrics_plots[[1]] + facet_zoom(xlim = c(0.15, 0.55), zoom.size=1),
                               metrics_plots[[2]],
                               metrics_plots[[3]] + facet_zoom(xlim = c(0.303, 0.43), zoom.size=1),
@@ -204,6 +202,6 @@ ggsave(gridExtra::arrangeGrob(metrics_plots[[1]] + facet_zoom(xlim = c(0.15, 0.5
                               filler_plot,
                               layout_matrix=matrix(c(2,3,4,5,2,6,4,5), 2, 4, byrow=TRUE),
                               widths=c(1.6,1,1,1), heights=c(4,4)),
-       file="alternate_metrics.pdf", width=9, height=5, device=cairo_pdf)
-ggsave(make_propdyn_plot("../../Results/LNS_sigma=40/large-network-simulations.csv"),
-       filename="alternate_propdyn.pdf", width=8, height=2.5, device=cairo_pdf)
+       file="alternate_metrics.pdf", width=9, height=5)
+ggsave(make_propdyn_plot("large-network-simulations_s40.csv"),
+       filename="alternate_propdyn.pdf", width=8, height=2.5)

@@ -3,7 +3,7 @@ library(tidyverse)
 library(JuliaCall)
 
 julia_setup()
-julia_source("../../Code/multipop_MANTIS.jl")
+julia_source("../../code/multipop_MANTIS.jl")
 
 my_cols <- c("#f74700", "#016394", "#b6003b", "#005342")
 
@@ -69,17 +69,3 @@ ggplot(timeseries %>% filter(strain == "Strain_111", equation=="y")) +
         legend.background=element_blank(),
         legend.title=element_blank())
 ggsave("dampening-cycles.pdf", width=10.5, height=2.5)
-
-# timeseries %>%
-#   select(-variable) %>%
-#   pivot_wider(names_from=equation, values_from=prevalence) %>%
-#   mutate(R0 = r_0(beta, sigma, gamma, mu, w)) %>%
-#   group_by(patch) %>%
-#   summarise(min(R0)) %>%
-#   print(n=26)
-
-timeseries %>%
-  filter(strain == "Strain_111") %>%
-  group_by(patch, equation) %>%
-  summarise(prevalence = mean(prevalence), .groups="drop") %>%
-  pivot_wider(names_from=equation, values_from=prevalence)
